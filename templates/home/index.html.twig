@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Users API!{% endblock %}
+
+{% block body %}
+
+{% dump(users.results) %}
+
+<div class="users_list">
+    <h1>Users API</h1>
+    
+    <table id="example" class="example display nowrap"  width="100%">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Lastname</th>
+                <th>Firstname</th>
+                <th>Location</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users.results %}
+            <tr>
+                <td>{{ user.name.title }}</td>
+                <td>{{ user.name.last }}</td>
+                <td>{{ user.name.first }}</td>
+                <td>{{ user.location.country }}</td>
+                <td>{{ user.email }}</td>
+            </tr> 
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Title</th>
+                <th>Lastname</th>
+                <th>Firstname</th>
+                <th>Location</th>
+                <th>Email</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+{% endblock %}

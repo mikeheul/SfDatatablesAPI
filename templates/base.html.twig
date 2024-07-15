@@ -5,7 +5,12 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
+        <link href="https://cdn.datatables.net/v/dt/dt-2.0.8/r-3.0.2/datatables.min.css" rel="stylesheet">
         {% endblock %}
+
+        <!-- Select2 plugin -->
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
+
 
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
@@ -13,5 +18,73 @@
     </head>
     <body>
         {% block body %}{% endblock %}
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.datatables.net/v/dt/dt-2.0.8/r-3.0.2/datatables.min.js"></script>
+
+        {# <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/dataTables.rowReorder.js"></script> #}
+        {# <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/rowReorder.dataTables.js"></script> #}
+
+        <!-- Select2 plugin -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+
+        <script>
+        $(document).ready( function () {
+
+            var table = $('.example').DataTable({
+                //rowReorder: true,
+                responsive: true,
+                initComplete: function () {
+                    count = 0;
+                    this.api().columns().every( function () {
+
+                        var title = this.header();
+
+                        var caption = $(title).html().replace('<span class="dt-column-title" role="button">', '').replace('</span><span class="dt-column-order"></span>', '')
+
+                        //replace spaces with dashes
+                        title = $(title).html().replace(/[\W]/g, '-');
+                        var column = this;
+                        var select = $('<select id="' + title + '" class="select2" ></select>')
+                            .appendTo( $(column.footer()).empty() )
+                            .on( 'change', function () {
+                            //Get the "text" property from each selected data 
+                            //regex escape the value and store in array
+                            var data = $.map( $(this).select2('data'), function( value, key ) {
+                                return value.text ? '^' + $.fn.dataTable.util.escapeRegex(value.text) + '$' : null;
+                                        });
+                            
+                            //if no data selected use ""
+                            if (data.length === 0) {
+                                data = [""];
+                            }
+                            
+                            //join array into string with regex or (|)
+                            var val = data.join('|');
+
+                            //search for the option(s) selected
+                            column
+                                    .search( val ? val : '', true, false )
+                                    .draw();
+                            } );
+        
+                        column.data().unique().sort().each( function ( d, j ) {
+                            select.append( '<option value="'+d+'">'+d+'</option>' );
+                        } );
+                    
+                    //use column title as selector and placeholder
+                    $('#' + title).select2({
+                        multiple: true,
+                        closeOnSelect: false,
+                        placeholder: caption
+                    });
+                    
+                    //initially clear select otherwise first option is selected
+                    $('.select2').val(null).trigger('change');
+                    } );
+                }
+            });
+        });
+        </script>
     </body>
 </html>

@@ -10,7 +10,7 @@ framework:
     #fragments: true
     http_client:
         scoped_clients:
-            jph:
+            httpc:
                 base_uri: https://randomuser.me/api/
 
 when@test:

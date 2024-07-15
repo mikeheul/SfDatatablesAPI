@@ -11,9 +11,9 @@ class ApiHttpClient extends AbstractController
 {
     private $httpClient;
 
-    public function __construct(HttpClientInterface $jph)
+    public function __construct(HttpClientInterface $httpc)
     {
-        $this->httpClient = $jph;
+        $this->httpClient = $httpc;
     }
 
     public function getUsers()
